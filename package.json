@@ -1,0 +1,14 @@
+{
+  "name": "advanced-databases-quiz-simulator",
+  "version": "1.0.0",
+  "description": "Practice quiz simulator for Advanced Databases Modules 1-4 (12 multiple choice + 3 open questions).",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
