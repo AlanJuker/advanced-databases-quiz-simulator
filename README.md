@@ -1,6 +1,6 @@
 # Advanced Databases Quiz Simulator
 
-A practice quiz and study guide for **Advanced Databases (MCAI 510), Modules 1–4**. Pick one of three quiz types. Questions are drawn at random from a bank of 204, every attempt is scored, and every question comes with an explanation.
+A practice quiz and study guide for **Advanced Databases (MCAI 510), Modules 1–4**. Pick one of three quiz types. Questions come from a bank of 204, with ones you have not seen yet picked first, every attempt is scored, and every question comes with an explanation.
 
 **Live:** https://alanjuker.github.io/advanced-databases-quiz-simulator/ · **Study guide:** https://alanjuker.github.io/advanced-databases-quiz-simulator/study.html
 
@@ -27,7 +27,7 @@ A practice quiz and study guide for **Advanced Databases (MCAI 510), Modules 1�
 - **Order:** theory questions first, then scenario questions (a schema, some rows, a buffer state, a rule to interpret), then the open questions.
 - **During the quiz:** a question navigator, flags, an elapsed-time clock, and keyboard shortcuts (`1`–`4` / `A`–`D` to answer, `←` `→` to move, `F` to flag).
 - **Open answers:** after you submit, you see the model answer and a rubric. Points are pre-ticked by keyword matching, and you confirm or correct them. Each open answer earns partial credit.
-- **Results:** your score against a 70% pass mark, a breakdown by module and question type, and a full review with explanations. Past attempts are saved in your browser.
+- **Results:** your score against a 70% pass mark, a breakdown by module and question type, and a full review with explanations. Past attempts and which questions you have seen are saved in your browser, and the start screen shows how much of the bank you have covered.
 
 Multiple-choice options are shuffled on every attempt, and a test checks that the correct option is never noticeably longer than the others.
 
