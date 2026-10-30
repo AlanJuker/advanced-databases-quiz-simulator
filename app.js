@@ -3,6 +3,7 @@
 
 const app = document.getElementById("app");
 const HISTORY_KEY = "adbquiz.history";
+const SEEN_KEY = "adbquiz.seen"; // question id → times shown, so new quizzes prefer unseen questions
 const PASS_MARK = 70;
 const LETTERS = "ABCD";
 // The real exam is 12 multiple choice + 3 open questions; the other two modes practise one part each.
@@ -18,36 +19,45 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 const fmt = (sec) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
 const isAnswered = (it) => (it.q.type === "mc" ? it.choice !== null : it.text.trim() !== "");
 
-function loadHistory() {
+function load(key, fallback) {
   try {
-    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    return JSON.parse(localStorage.getItem(key)) || fallback;
   } catch {
-    return [];
+    return fallback;
   }
 }
 
-function saveHistory(list) {
+function save(key, value) {
   try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 20)));
+    localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // Storage unavailable (private mode); history is a convenience, so ignore.
+    // Storage unavailable (private mode); history and progress are conveniences, so ignore.
   }
 }
 
 // ───────────── Mode picker ─────────────
 function renderSetup() {
   state = null;
-  const history = loadHistory();
+  const history = load(HISTORY_KEY, []);
+  const seen = load(SEEN_KEY, {});
+  const seenCount = QUESTIONS.filter((q) => seen[q.id]).length;
+  const seenPct = Math.round((seenCount / QUESTIONS.length) * 100);
   app.innerHTML = `
     <section class="card">
       <h2>Choose a quiz</h2>
-      <p class="muted">Questions cover Modules 1–4 and are drawn at random every time. You can move freely between
-      questions. Open answers are graded against a rubric after you submit.</p>
+      <p class="muted">Questions cover Modules 1–4. Each quiz gives you questions you haven't seen yet first, so
+      you work through the whole bank before anything repeats. You can move freely between questions. Open answers
+      are graded against a rubric after you submit.</p>
       <div class="modes">
         ${Object.entries(MODES).map(([k, m], i) => `
           <button class="mode ${i === 0 ? "featured" : ""}" data-mode="${k}">
             <strong>${m.title}</strong><span class="muted small">${m.detail}</span>
           </button>`).join("")}
+      </div>
+      <div class="bar-row" style="margin-top: 16px">
+        <span>Seen ${seenCount} / ${QUESTIONS.length}</span>
+        <div class="bar"><span style="width: ${seenPct}%"></span></div>
+        <span class="small">${seenPct}%</span>
       </div>
     </section>
     ${history.length ? `
@@ -68,7 +78,7 @@ function startQuiz(mode) {
   state = {
     screen: "quiz",
     mode,
-    items: buildQuiz(QUESTIONS, { mcCount: m.mc, openCount: m.open }),
+    items: buildQuiz(QUESTIONS, { mcCount: m.mc, openCount: m.open, seen: load(SEEN_KEY, {}) }),
     index: 0,
     startedAt: Date.now(),
     saved: false,
@@ -194,7 +204,10 @@ function renderResults() {
   const g = grade(state.items);
   const seconds = Math.round((state.finishedAt - state.startedAt) / 1000);
   if (!state.saved) {
-    saveHistory([{ date: new Date().toISOString(), mode: state.mode, total: g.total, percent: g.percent }, ...loadHistory()]);
+    save(HISTORY_KEY, [{ date: new Date().toISOString(), mode: state.mode, total: g.total, percent: g.percent }, ...load(HISTORY_KEY, [])].slice(0, 20));
+    const seen = load(SEEN_KEY, {});
+    state.items.forEach((it) => (seen[it.q.id] = (seen[it.q.id] || 0) + 1));
+    save(SEEN_KEY, seen);
     state.saved = true;
   }
   const pass = g.percent >= PASS_MARK;
@@ -278,7 +291,7 @@ app.addEventListener("click", (e) => {
   else if (act === "retake") startQuiz(state.mode);
   else if (act === "setup") renderSetup();
   else if (act === "clear-history" && confirm("Delete all saved attempts?")) {
-    saveHistory([]);
+    save(HISTORY_KEY, []);
     renderSetup();
   }
 });

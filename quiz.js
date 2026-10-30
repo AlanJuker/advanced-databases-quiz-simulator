@@ -12,10 +12,12 @@ function shuffle(items, rand = Math.random) {
 }
 
 // Picks n questions of one type, aiming for CODE_SHARE code questions and topping up from
-// whatever is left if a bucket runs short.
-function pickType(pool, n, rand) {
-  const code = shuffle(pool.filter((q) => q.kind === "code"), rand);
-  const theory = shuffle(pool.filter((q) => q.kind !== "code"), rand);
+// whatever is left if a bucket runs short. Least-seen questions come first (random among ties),
+// so repeated quizzes work through the whole bank before anything repeats.
+function pickType(pool, n, rand, seen) {
+  const fresh = (qs) => shuffle(qs, rand).sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0));
+  const code = fresh(pool.filter((q) => q.kind === "code"));
+  const theory = fresh(pool.filter((q) => q.kind !== "code"));
   const nCode = Math.min(code.length, Math.round(n * CODE_SHARE));
   const picked = [...code.slice(0, nCode), ...theory.slice(0, n - nCode)];
   const rest = [...theory.slice(n - nCode), ...code.slice(nCode)];
@@ -27,14 +29,15 @@ const theoryFirst = (a, b) => (a.kind === "code") - (b.kind === "code");
 
 // Returns quiz items in exam order: theory MC, scenario MC, then open questions.
 // MC options are shuffled; `order` maps display index → original index.
-function buildQuiz(bank, { mcCount, openCount }, rand = Math.random) {
+// `seen` maps question id → times already shown.
+function buildQuiz(bank, { mcCount, openCount, seen = {} }, rand = Math.random) {
   const mc = bank.filter((q) => q.type === "mc");
   const open = bank.filter((q) => q.type === "open");
   const nMc = Math.min(mc.length, mcCount);
   const nOpen = Math.min(open.length, openCount);
   return [
-    ...shuffle(pickType(mc, nMc, rand), rand).sort(theoryFirst).map((q) => ({ q, order: shuffle([0, 1, 2, 3], rand), choice: null, flagged: false })),
-    ...shuffle(pickType(open, nOpen, rand), rand).sort(theoryFirst).map((q) => ({ q, text: "", points: q.keyPoints.map(() => false), flagged: false })),
+    ...shuffle(pickType(mc, nMc, rand, seen), rand).sort(theoryFirst).map((q) => ({ q, order: shuffle([0, 1, 2, 3], rand), choice: null, flagged: false })),
+    ...shuffle(pickType(open, nOpen, rand, seen), rand).sort(theoryFirst).map((q) => ({ q, text: "", points: q.keyPoints.map(() => false), flagged: false })),
   ];
 }
 

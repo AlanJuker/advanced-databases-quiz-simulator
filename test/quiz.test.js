@@ -45,6 +45,21 @@ test("quick quiz is only multiple choice and open quiz is only open questions", 
   assert.ok(open.every((it) => it.q.type === "open"));
 });
 
+test("repeated quizzes work through the whole bank before repeating a question", () => {
+  const seen = {};
+  const take = (opts) => buildQuiz(QUESTIONS, { ...opts, seen }).forEach((it) => (seen[it.q.id] = (seen[it.q.id] || 0) + 1));
+  const open = QUESTIONS.filter((q) => q.type === "open");
+  for (let i = 0; i < open.length / 3; i++) take({ mcCount: 0, openCount: 3 });
+  assert.ok(open.every((q) => seen[q.id] === 1), "every open question once, none twice");
+  for (let i = 0; i < 40; i++) take({ mcCount: 12, openCount: 3 });
+  for (const type of ["mc", "open"]) {
+    for (const kind of ["theory", "code"]) {
+      const counts = QUESTIONS.filter((q) => q.type === type && q.kind === kind).map((q) => seen[q.id] || 0);
+      if (counts.length) assert.ok(Math.max(...counts) - Math.min(...counts) <= 1, `${type}-${kind} counts stay even`);
+    }
+  }
+});
+
 test("shuffled options still grade against the original answer", () => {
   for (let run = 0; run < 50; run++) {
     const [item] = buildQuiz(QUESTIONS, { mcCount: 1, openCount: 0 });
