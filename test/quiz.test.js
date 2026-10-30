@@ -37,8 +37,8 @@ test("real quiz: 12 multiple choice + 3 open, theory before scenarios before ope
 });
 
 test("quick quiz is only multiple choice and open quiz is only open questions", () => {
-  const quick = buildQuiz(QUESTIONS, { mcCount: 12, openCount: 0 });
-  assert.equal(quick.length, 12);
+  const quick = buildQuiz(QUESTIONS, { mcCount: 6, openCount: 0 });
+  assert.equal(quick.length, 6);
   assert.ok(quick.every((it) => it.q.type === "mc"));
   const open = buildQuiz(QUESTIONS, { mcCount: 0, openCount: 3 });
   assert.equal(open.length, 3);

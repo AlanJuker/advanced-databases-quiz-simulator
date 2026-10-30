@@ -8,7 +8,7 @@ const LETTERS = "ABCD";
 // The real exam is 12 multiple choice + 3 open questions; the other two modes practise one part each.
 const MODES = {
   real: { title: "Real quiz", detail: "12 multiple choice + 3 open questions, like the exam", mc: 12, open: 3 },
-  quick: { title: "Quick quiz", detail: "12 multiple-choice questions only", mc: 12, open: 0 },
+  quick: { title: "Quick quiz", detail: "6 multiple-choice questions only", mc: 6, open: 0 },
   open: { title: "Open quiz", detail: "3 open questions only", mc: 0, open: 3 },
 };
 
