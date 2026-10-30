@@ -1,13 +1,13 @@
 # Advanced Databases Quiz Simulator
 
-A practice quiz for **Advanced Databases (MCAI 510), Modules 1–4**. Pick one of three quiz types. Questions are drawn at random from a bank of 204, every attempt is scored, and every question comes with an explanation.
+A practice quiz and study guide for **Advanced Databases (MCAI 510), Modules 1–4**. Pick one of three quiz types. Questions are drawn at random from a bank of 204, every attempt is scored, and every question comes with an explanation.
 
-**Live:** https://alanjuker.github.io/advanced-databases-quiz-simulator/
+**Live:** https://alanjuker.github.io/advanced-databases-quiz-simulator/ · **Study guide:** https://alanjuker.github.io/advanced-databases-quiz-simulator/study.html
 
 | Quiz | What you get |
 | --- | --- |
 | **Real quiz** | 12 multiple choice + 3 open questions, like the exam |
-| **Quick quiz** | 12 multiple-choice questions only |
+| **Quick quiz** | 6 multiple-choice questions only |
 | **Open quiz** | 3 open questions only |
 
 | Module | Topics |
@@ -16,6 +16,10 @@ A practice quiz for **Advanced Databases (MCAI 510), Modules 1–4**. Pick one o
 | 2 · Storage, buffers & indexing | Storage hierarchy, blocks and disk access cost, buffer pool, pin-count and dirty bit, LRU/FIFO/clock, records and file headers, heap/sorted/hashed files, primary/clustering/secondary indexes, RAID, NAS/SAN, storage tiering |
 | 3 · Specialized data models | Hierarchical, active (triggers, ECA), temporal (valid/transaction time, bitemporal), spatial (range, nearest-neighbour, spatial join), multimedia, deductive (Datalog), plus the Module 3 in-class activities |
 | 4 · Schema design & integrity | Relations, domains, atomic values, NULL meanings, superkeys/candidate/primary keys, constraint types, entity and referential integrity, restrict/cascade/set NULL, transactions, design-to-storage alignment, plus the Module 4 in-class activities |
+
+## Study guide
+
+`study.html` summarises all four modules in plain English: the idea in one sentence, the key terms in tables, worked examples from the in-class activities, exam traps, self-check questions, a last-minute review of pairs that are easy to mix up, and model answers for likely open questions.
 
 ## How a quiz works
 
@@ -46,7 +50,8 @@ The tests check that the question bank is well formed, that each quiz type has t
 ## Project structure
 
 ```
-index.html        page shell
+index.html        quiz page
+study.html        study guide
 styles.css        light/dark theme, responsive layout
 questions.js      question bank (edit here to add questions)
 quiz.js           pure logic: selection, shuffling, scoring
