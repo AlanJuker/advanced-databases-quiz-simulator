@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Advanced Databases Study Guide</title>
+  <meta name="description" content="Short, plain-English study guide for Advanced Databases (MCAI 510) Modules 1-4, with examples, exam traps and self-checks.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Advanced Databases Study Guide</h1>
+    <p class="subtitle">MCAI 510 · Modules 1–4</p>
+    <nav class="site-nav" aria-label="Site">
+      <a href="index.html">Practice quiz</a>
+      <a href="study.html" aria-current="page">Study guide</a>
+    </nav>
+  </header>
+
+  <main class="guide">
+    <section class="card">
+      <h2>The course in one table</h2>
+      <p>The whole course answers one question: <strong>how do we store data so it stays correct, is fast to find, and fits the problem?</strong> Each module is one piece of the answer.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Module</th><th>Big question</th><th>Remember this</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#m1">1 · Concepts &amp; architectures</a></td><td>What is a DBMS and how is it organized?</td><td>Keep what users see separate from how data is stored.</td></tr>
+          <tr><td><a href="#m2">2 · Storage &amp; indexing</a></td><td>How is data stored and found quickly?</td><td>Disk is slow. Buffers and indexes avoid disk reads.</td></tr>
+          <tr><td><a href="#m3">3 · Specialized models</a></td><td>What if plain tables are not enough?</td><td>Match the model to the data: time, place, media, rules or levels.</td></tr>
+          <tr><td><a href="#m4">4 · Schema &amp; integrity</a></td><td>How do I design tables that stay correct?</td><td>Keys identify, constraints protect, transactions keep states valid.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted small">How to study: read one module, take a <a href="index.html">Quick quiz</a>, then re-read only what you missed. Use the <a href="#review">last-minute review</a> the day before the exam.</p>
+    </section>
+
+    <!-- ───────────────────────── Module 1 ───────────────────────── -->
+    <section class="card" id="m1">
+      <h2>Module 1 · Concepts, architectures &amp; database types</h2>
+      <p class="one-liner">A DBMS is the software that stores, protects and shares data. Its key design idea is to keep <strong>what users see</strong> separate from <strong>how data is stored</strong>.</p>
+
+      <h3>1.1 Database vs DBMS vs database system</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Term</th><th>What it is</th><th>Library analogy</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Database</strong></td><td>A collection of related data that represents part of the real world</td><td>The books</td></tr>
+          <tr><td><strong>DBMS</strong></td><td>The software that defines, stores, retrieves, updates, protects and shares the data</td><td>The librarian and the catalogue system</td></tr>
+          <tr><td><strong>Database system</strong></td><td>Database + DBMS + the applications that use them</td><td>The whole library, working</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li><strong>Miniworld</strong> (universe of discourse): the part of the real world the database represents, e.g. students and courses.</li>
+        <li><strong>Data</strong> is the content (names, grades). <strong>Metadata</strong> is data about the data (table names, data types, constraints). The DBMS keeps metadata in the <strong>database catalog</strong>.</li>
+        <li>A <strong>query</strong> asks for data. An <strong>update</strong> changes data. A <strong>transaction</strong> is several steps that succeed or fail together.</li>
+      </ul>
+
+      <h3>1.2 The four DBMS characteristics</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Characteristic</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Self-describing</strong></td><td>It stores its own structure in the catalog</td><td>It knows which columns STUDENT has</td></tr>
+          <tr><td><strong>Program-data independence</strong></td><td>Apps don't depend on how data is physically stored</td><td>Storage changes, the app keeps working</td></tr>
+          <tr><td><strong>Multiple views</strong></td><td>Each user group sees its own part</td><td>A student sees their transcript; the registrar sees all grades</td></tr>
+          <tr><td><strong>Shared multiuser</strong></td><td>Many users at once, and the data stays correct</td><td>Hundreds of students registering at the same time</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>1.3 Who works with the database</h3>
+      <ul>
+        <li><strong>DBA</strong> (database administrator): access, security, performance, backups.</li>
+        <li><strong>Database designer</strong>: decides what data to store and how to structure it.</li>
+        <li><strong>Application programmer</strong>: writes the software that sends requests to the DBMS.</li>
+        <li><strong>End users</strong>: use apps, forms, dashboards and reports.</li>
+      </ul>
+
+      <h3>1.4 Data models, from human to machine</h3>
+      <ol>
+        <li><strong>Conceptual</strong>: entities, attributes and relationships (Student, Course). Close to how people think.</li>
+        <li><strong>Representational</strong> (implementation): the <strong>relational model</strong>, i.e. tables with rows and columns.</li>
+        <li><strong>Physical</strong>: how data sits on disk (record formats, indexes, file organization).</li>
+      </ol>
+
+      <h3>1.5 Schema vs instance</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th></th><th>Schema</th><th>Instance (state)</th></tr></thead>
+        <tbody>
+          <tr><td>What</td><td>The blueprint: structure, types, constraints</td><td>The actual data at one moment</td></tr>
+          <tr><td>Changes</td><td>Rarely</td><td>All the time</td></tr>
+          <tr><td>Example</td><td>STUDENT(Student_ID, Name, Program_ID)</td><td>The 1,000 student rows stored today</td></tr>
+        </tbody>
+      </table></div>
+      <p>Admitting a new student changes the <strong>instance</strong>, not the schema. <strong>Data abstraction</strong> means users work with concepts like "my transcript" without seeing disk details.</p>
+
+      <h3>1.6 The three-schema architecture</h3>
+      <figure class="table-wrap">
+        <svg class="diagram" viewBox="0 0 680 350" role="img" aria-label="Three-schema architecture: external views map to the conceptual schema, which maps to internal storage">
+          <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker></defs>
+          <text class="level" x="10" y="48">External level</text>
+          <text class="muted" x="10" y="66">user views</text>
+          <rect class="box" x="150" y="20" width="160" height="52" rx="8"/><text x="230" y="51" text-anchor="middle">Student view</text>
+          <rect class="box" x="330" y="20" width="160" height="52" rx="8"/><text x="410" y="51" text-anchor="middle">Registrar view</text>
+          <rect class="box" x="510" y="20" width="160" height="52" rx="8"/><text x="590" y="51" text-anchor="middle">Finance view</text>
+          <line x1="230" y1="74" x2="300" y2="146" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <line x1="410" y1="74" x2="410" y2="146" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <line x1="590" y1="74" x2="520" y2="146" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <text class="muted" x="10" y="106">mapping</text>
+          <text class="muted" x="10" y="122">(logical independence)</text>
+          <text class="level" x="10" y="174">Conceptual level</text>
+          <text class="muted" x="10" y="192">whole database</text>
+          <rect class="box accent" x="150" y="148" width="520" height="52" rx="8"/><text x="410" y="179" text-anchor="middle">All entities, relationships and constraints, no storage details</text>
+          <line x1="410" y1="202" x2="410" y2="274" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <text class="muted" x="10" y="234">mapping</text>
+          <text class="muted" x="10" y="250">(physical independence)</text>
+          <text class="level" x="10" y="302">Internal level</text>
+          <text class="muted" x="10" y="320">physical storage</text>
+          <rect class="box" x="150" y="276" width="520" height="52" rx="8"/><text x="410" y="307" text-anchor="middle">Files, records, indexes and access paths on disk</text>
+        </svg>
+      </figure>
+      <ul>
+        <li><strong>External</strong>: what each user group sees. It hides what they don't need.</li>
+        <li><strong>Conceptual</strong>: the full structure for everyone, with no storage details.</li>
+        <li><strong>Internal</strong>: how data is physically stored.</li>
+        <li>A <strong>mapping</strong> translates a request down the levels, and the results back up.</li>
+        <li><strong>Goal</strong>: separate applications from physical storage.</li>
+      </ul>
+
+      <h3>1.7 Data independence</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Type</th><th>You can change…</th><th>…without changing</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Logical</strong></td><td>The conceptual schema</td><td>User views and apps</td><td>Add a Preferred_Name attribute</td></tr>
+          <tr><td><strong>Physical</strong></td><td>The internal schema</td><td>The conceptual schema</td><td>Add an index, reorganize a file</td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted small">Memory trick: physical = disk, files, indexes. Logical = attributes and structure.</p>
+
+      <h3>1.8 Languages and interfaces</h3>
+      <ul>
+        <li><strong>DDL</strong> (Data Definition Language) defines structure: <code>CREATE TABLE</code>. <strong>DML</strong> (Data Manipulation Language) works on data: <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>.</li>
+        <li><strong>Procedural</strong>: you say <em>how</em> to get the data. <strong>Nonprocedural / declarative</strong> (like SQL): you say <em>what</em> you want.</li>
+        <li>Interfaces: <strong>menu-based</strong>, <strong>forms-based</strong>, <strong>query interface</strong> (typing SQL), <strong>application interface</strong> (apps through drivers or APIs).</li>
+      </ul>
+
+      <h3>1.9 Architectures and environments</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Architecture</th><th>Idea</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Centralized</strong></td><td>Everything at one site (old mainframes)</td></tr>
+          <tr><td><strong>Two-tier</strong> (client/server)</td><td>Client = user interface. Database server = DBMS.</td></tr>
+          <tr><td><strong>Three-tier</strong></td><td>Client → middle layer with the application logic → database server</td></tr>
+          <tr><td><strong>Distributed</strong></td><td>Data spread across networked sites. Benefits: availability, scalability, local access. Challenges: consistency, coordination, security, recovery.</td></tr>
+          <tr><td><strong>Cloud</strong></td><td>Cloud infrastructure: elastic scaling, managed backups, global access</td></tr>
+        </tbody>
+      </table></div>
+      <p>DBMSs are classified by <strong>data model</strong>, <strong>number of users</strong> (single-user or multiuser), <strong>number of sites</strong> (centralized or distributed) and <strong>purpose</strong> (general or specialized).</p>
+
+      <h3>1.10 Which database type fits?</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>If the data is…</th><th>Use</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Structured, with rules and strong consistency</td><td><strong>Relational</strong></td><td>Invoices, payments, registration</td></tr>
+          <tr><td>Semi-structured, different shape per record</td><td><strong>Document</strong></td><td>Product reviews</td></tr>
+          <tr><td>All about connections between things</td><td><strong>Graph</strong></td><td>Social networks, fraud, referrals</td></tr>
+          <tr><td>Looked up very fast by one key</td><td><strong>Key-value</strong></td><td>Session ID → session data</td></tr>
+          <tr><td>Tree-shaped and exchanged between systems</td><td><strong>XML</strong></td><td>Data exchange formats</td></tr>
+          <tr><td>Old systems still in use</td><td><strong>Hierarchical / network</strong></td><td>Legacy mainframes</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="trap"><strong>Exam traps.</strong>
+        <ul>
+          <li>Database ≠ DBMS. The database is the data. The DBMS is the software.</li>
+          <li><strong>Three-schema</strong> (levels of description) ≠ <strong>three-tier</strong> (layers of servers).</li>
+          <li>Adding an index = <strong>physical</strong> independence. Adding an attribute = <strong>logical</strong> independence.</li>
+        </ul>
+      </div>
+
+      <h3>Check yourself</h3>
+      <details><summary>A DBA adds an index and nobody's queries change. Which independence is this?</summary><p>Physical data independence: the internal level changed, and the conceptual level did not.</p></details>
+      <details><summary>What changes when a grade is updated: the schema or the instance?</summary><p>The instance (state). The schema is the blueprint and stays the same.</p></details>
+      <details><summary>Which characteristic lets the registrar and students see different things?</summary><p>Multiple views.</p></details>
+      <details><summary>Customer referral chains: which database type?</summary><p>Graph, because the relationships are the main interest.</p></details>
+    </section>
+
+    <!-- ───────────────────────── Module 2 ───────────────────────── -->
+    <section class="card" id="m2">
+      <h2>Module 2 · Storage, buffers &amp; indexing</h2>
+      <p class="one-liner">Disk is slow and memory is small. So the DBMS reads whole <strong>blocks</strong>, keeps useful ones in a memory <strong>buffer</strong>, and uses <strong>file organization</strong> and <strong>indexes</strong> to avoid reading data it doesn't need.</p>
+
+      <h3>2.1 The storage hierarchy</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Level</th><th>Examples</th><th>Speed</th><th>Survives power loss?</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Primary</strong></td><td>Main memory (RAM), cache</td><td>Fastest</td><td>No (volatile)</td><td>Data being processed now</td></tr>
+          <tr><td><strong>Secondary</strong></td><td>HDD, SSD</td><td>Slower</td><td>Yes (nonvolatile)</td><td>The database itself</td></tr>
+          <tr><td><strong>Tertiary</strong></td><td>Tape, optical</td><td>Slowest</td><td>Yes</td><td>Backups and archives</td></tr>
+        </tbody>
+      </table></div>
+      <p>Databases hold <strong>persistent data</strong>, which must survive restarts. They aren't kept only in memory because memory is too small, more expensive and volatile. Only the blocks that are needed are brought into memory.</p>
+
+      <h3>2.2 Disks, blocks and access cost</h3>
+      <ul>
+        <li>A <strong>block</strong> (page) is the fixed-size unit moved between disk and memory. To read one record, the DBMS reads the whole block.</li>
+        <li>A <strong>track</strong> is a circle on the disk surface, and a <strong>sector</strong> is part of a track. A <strong>cylinder</strong> is the same track across all surfaces.</li>
+        <li>Disk access time = <strong>seek time</strong> (move the head to the track) + <strong>rotational delay</strong> (wait for the block to spin under the head) + <strong>transfer time</strong> (copy the data to memory).</li>
+        <li><strong>SSDs</strong> have no moving parts, so they avoid mechanical delays. Good design (buffers, indexes) still matters.</li>
+        <li>A <strong>full scan</strong> reads every block. That's fine for small files and expensive for big ones.</li>
+      </ul>
+
+      <h3>2.3 The buffer pool</h3>
+      <p>A <strong>buffer</strong> is a memory area that holds one block. The <strong>buffer pool</strong> is many buffers. The <strong>buffer manager</strong> decides which pages stay in memory and which get replaced. Reusing a page that's already in memory avoids a slow disk read.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Flag</th><th>Means</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Pin-count</strong></td><td>How many users or processes are using the page right now</td><td>If it's above 0, the page is pinned and must not be removed</td></tr>
+          <tr><td><strong>Dirty bit</strong></td><td>The page was changed in memory</td><td>Write it back to disk before removing it</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Can this page be replaced?</strong> If it's pinned, no. If it's dirty, write it back first. If it's clean and unpinned, it can go immediately.</p>
+      <p><strong>Double buffering</strong> uses two buffers, so the CPU works on one while the disk fills the other.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Replacement policy</th><th>Removes the page…</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LRU</strong> (least recently used)</td><td>Not <em>used</em> for the longest time</td></tr>
+          <tr><td><strong>FIFO</strong> (first-in, first-out)</td><td>That <em>arrived</em> first, even if it's still used a lot</td></tr>
+          <tr><td><strong>Clock</strong></td><td>Like LRU but cheaper: recently used pages get a "second chance"</td></tr>
+        </tbody>
+      </table></div>
+      <p class="example"><strong>Example.</strong> Pages A, B and C are loaded in that order, then A and C are used, and D needs room. <strong>LRU</strong> removes B, the one not used for the longest time. <strong>FIFO</strong> removes A, the one that arrived first.</p>
+
+      <h3>2.4 Records and files</h3>
+      <ul>
+        <li>A <strong>record</strong> is a group of related field values (Employee_ID, Name, Salary).</li>
+        <li>With <strong>fixed-length</strong> records, the DBMS can calculate where each record starts. <strong>Variable-length</strong> records suit optional or varying fields.</li>
+        <li>An <strong>unspanned</strong> record must fit inside one block. A <strong>spanned</strong> record can continue in the next block, which is needed when a record is bigger than a block.</li>
+        <li>The <strong>file header</strong> (descriptor) stores the record format, field sizes and block addresses.</li>
+      </ul>
+
+      <h3>2.5 File organizations</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>File</th><th>How records are stored</th><th>Good at</th><th>Bad at</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Heap</strong> (unordered)</td><td>In arrival order, appended at the end</td><td>Fast inserts</td><td>Searching (needs a full scan)</td></tr>
+          <tr><td><strong>Sorted</strong></td><td>Ordered by a sort key</td><td>Reading in order</td><td>Inserts (the order must be kept)</td></tr>
+          <tr><td><strong>Hashed</strong></td><td>A hash function turns the key into a bucket</td><td>Exact matches (ID = 1005)</td><td>Ranges (ID between 1000 and 2000)</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>2.6 Indexes</h3>
+      <p>An <strong>index</strong> is an extra (auxiliary) structure, like the index at the back of a book. It stores <strong>search key</strong> values with <strong>pointers</strong> to the records. It doesn't replace the data file; it is another way to reach the records.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Index</th><th>Built on</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Primary</strong></td><td>The file's ordering field, which is unique</td><td>File sorted by Student_ID</td></tr>
+          <tr><td><strong>Clustering</strong></td><td>The file's ordering field, which is not unique</td><td>File sorted by Department</td></tr>
+          <tr><td><strong>Secondary</strong></td><td>A field that is not the ordering field</td><td>File sorted by ID, index on Email</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Trade-off:</strong> indexes take extra storage and slow down every insert, update and delete. Index the fields that are searched often, not every column.</p>
+
+      <h3>2.7 Enterprise storage</h3>
+      <ul>
+        <li><strong>RAID</strong>: <strong>striping</strong> spreads data across disks for speed. <strong>Mirroring</strong> keeps a duplicate copy for reliability. <strong>Parity</strong> stores extra information to rebuild a failed disk.</li>
+        <li><strong>NAS</strong> provides <em>file</em>-level storage over a network. A <strong>SAN</strong> provides <em>block</em>-level storage over a specialized network.</li>
+        <li><strong>Storage tiering</strong> keeps hot data on fast storage and cold data on cheap storage.</li>
+      </ul>
+
+      <div class="trap"><strong>Exam traps.</strong>
+        <ul>
+          <li>LRU looks at the <em>last use</em>. FIFO looks at <em>arrival time</em>.</li>
+          <li>A dirty page can still be replaced, but only after it's written back. A pinned page can't be replaced.</li>
+          <li>Hashing is great for exact matches and bad for ranges.</li>
+          <li>Faster SSDs don't remove the need for indexes and buffering.</li>
+        </ul>
+      </div>
+
+      <h3>Check yourself</h3>
+      <details><summary>P1: pin 0, dirty. P2: pin 2, clean. P3: pin 0, clean. Which page can go without writing to disk?</summary><p>P3. P1 must be written first, and P2 is pinned.</p></details>
+      <details><summary>Which file organization makes inserts expensive?</summary><p>Sorted, because every insert has to keep the order.</p></details>
+      <details><summary>The file is ordered by Student_ID. What kind of index is an index on Email?</summary><p>A secondary index, since Email is not the ordering field.</p></details>
+      <details><summary>Why not index every column?</summary><p>Every index costs storage and slows down inserts, updates and deletes.</p></details>
+    </section>
+
+    <!-- ───────────────────────── Module 3 ───────────────────────── -->
+    <section class="card" id="m3">
+      <h2>Module 3 · Specialized &amp; hierarchical data models</h2>
+      <p class="one-liner">When data involves <strong>time, location, media content, rules or levels</strong>, a specialized model fits better than plain rows and columns. Choose by the data and the questions it must answer.</p>
+
+      <h3>3.1 Match the requirement to the model</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Clue in the question</th><th>Model</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Parent–child levels, a tree</td><td><strong>Hierarchical</strong></td><td>Org chart, folders, reporting lines</td></tr>
+          <tr><td>"Automatically when…", alerts</td><td><strong>Active</strong> (triggers)</td><td>Automatic safety alerts, reorder stock</td></tr>
+          <tr><td>History, "on a past date", audit trail</td><td><strong>Temporal</strong></td><td>Historical permits, salary history</td></tr>
+          <tr><td>Location, distance, inside, nearest</td><td><strong>Spatial</strong></td><td>Road maps, delivery zones</td></tr>
+          <tr><td>Images, video, audio searched by content</td><td><strong>Multimedia</strong></td><td>Traffic-camera video</td></tr>
+          <tr><td>Infer new facts from rules</td><td><strong>Deductive</strong></td><td>Regulations and inferred eligibility</td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted small">One system can combine several models. The city platform from the in-class activity uses all six.</p>
+
+      <h3>3.2 Hierarchical model</h3>
+      <ul>
+        <li>A <strong>tree</strong> where each child has exactly <strong>one parent</strong>: Faculty → Department → Program → Course.</li>
+        <li>Good for file systems, org charts and category trees. Navigation from parent to child is fast.</li>
+        <li><strong>Limit:</strong> many-to-many relationships. A student takes many courses, and a course has many students.</li>
+        <li><strong>In-class activity:</strong> a course that belongs to two programs needs two parents, which breaks the tree. Fix it with a relational <strong>Program–Course link table</strong> (or a graph), and keep the tree only as a navigation view.</li>
+        <li>XML and JSON still use hierarchical (nested) structure.</li>
+      </ul>
+
+      <h3>3.3 Active databases and triggers</h3>
+      <p>An <strong>active database</strong> reacts automatically to events. Its tool is the <strong>trigger</strong>, a rule that fires on INSERT, UPDATE or DELETE. Rules follow the <strong>ECA</strong> model:</p>
+      <div class="flow">
+        <div class="step"><strong>Event</strong><span>What starts it: an INSERT or UPDATE on Inventory</span></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step"><strong>Condition</strong><span>The test: quantity &lt; reorder level and no open request</span></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step"><strong>Action</strong><span>The response: create one replenishment request</span></div>
+      </div>
+      <ul>
+        <li><strong>Why a trigger instead of app code?</strong> The rule runs on every change, whichever app made it.</li>
+        <li><strong>Caution:</strong> triggers can chain (one fires another) and create loops. Design, document and test them.</li>
+      </ul>
+
+      <h3>3.4 Temporal databases</h3>
+      <p>A <strong>temporal database</strong> keeps history instead of overwriting old values. A <strong>time point</strong> is one moment. A <strong>time period</strong> has a start and an end.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Time</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Valid time</strong></td><td>When the fact is true in the real world</td></tr>
+          <tr><td><strong>Transaction time</strong></td><td>When the database recorded the fact</td></tr>
+          <tr><td><strong>Bitemporal</strong></td><td>Both are stored</td></tr>
+        </tbody>
+      </table></div>
+      <p class="example"><strong>In-class activity:</strong> a salary of $82,000 is effective Jan 1 and entered on Jan 10. On Feb 3, HR corrects it to $84,000.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Version</th><th>Salary</th><th>Valid from</th><th>Recorded on (transaction time)</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>$82,000</td><td>Jan 1</td><td>Jan 10</td></tr>
+          <tr><td>2 (correction)</td><td>$84,000</td><td>Jan 1</td><td>Feb 3</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Tuple versioning</strong> keeps several versions of a row, each with its time period. The cost is more storage. If only the current value matters, you don't need a temporal model.</p>
+
+      <h3>3.5 Spatial databases</h3>
+      <p>A spatial database stores objects as <strong>points</strong> (a store), <strong>lines</strong> (a road) and <strong>polygons</strong> (a city boundary or flood zone). Location queries need <strong>spatial indexes</strong>, because normal indexes don't handle 2D or 3D coordinates well.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Query</th><th>Finds</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Range</strong></td><td>Objects inside an area</td><td>Hospitals inside the flood zone</td></tr>
+          <tr><td><strong>Nearest neighbour</strong></td><td>The closest object</td><td>The ambulance closest to an accident</td></tr>
+          <tr><td><strong>Spatial join</strong></td><td>Matches between two sets of objects</td><td>Shelters that intersect evacuation districts</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>3.6 Multimedia databases</h3>
+      <ul>
+        <li>Images, video, audio and documents. Their meaning is in the <strong>content</strong>, and a filename says almost nothing about it.</li>
+        <li><strong>Content-based retrieval</strong> finds items by analysing them (colour, shape, objects, sound patterns).</li>
+        <li><strong>Semantic tagging</strong> adds labels such as "campus" or "snow", manually or automatically.</li>
+        <li>In the schema, store <strong>file references and metadata</strong>, and keep the big files in separate storage.</li>
+      </ul>
+
+      <h3>3.7 Deductive databases</h3>
+      <p>A <strong>deductive database</strong> = stored <strong>facts</strong> + <strong>rules</strong> → it <strong>infers</strong> new facts that were never stored. It is useful for indirect or recursive relationships, such as everyone above you in a supervision chain. <strong>Datalog</strong> is its rule language. A rule has a <strong>head</strong> (the conclusion) and a <strong>body</strong> (the conditions).</p>
+      <pre><code>graduate_student(maya).
+enrolled(maya, advanced_databases).
+lab_access(X) :- graduate_student(X), enrolled(X, advanced_databases).
+→ derived fact: lab_access(maya).</code></pre>
+
+      <h3>3.8 Choosing a model</h3>
+      <p>Pick the model that fits the data and the questions, not the most sophisticated one. Each model adds cost: temporal needs more storage, spatial needs spatial indexes, multimedia needs content analysis, and deductive needs well-designed rules.</p>
+
+      <div class="trap"><strong>Exam traps.</strong>
+        <ul>
+          <li>Valid time = the <em>real world</em>. Transaction time = the <em>database</em>. A correction keeps its valid time and gets a new transaction time.</li>
+          <li>"Inside an area" = range. "Closest" = nearest neighbour. "Two sets compared" = spatial join.</li>
+          <li>Hierarchical models fail with many-to-many relationships.</li>
+        </ul>
+      </div>
+
+      <h3>Check yourself</h3>
+      <details><summary>"Automatic safety alerts" in the city platform: which model?</summary><p>Active database rules (triggers).</p></details>
+      <details><summary>In ECA, which part decides <em>whether</em> the rule runs?</summary><p>The condition.</p></details>
+      <details><summary>Which shelters intersect the evacuation districts? Which query type?</summary><p>A spatial join, because it compares two sets of objects.</p></details>
+      <details><summary>What new fact comes from the Maya rule?</summary><p>lab_access(maya).</p></details>
+    </section>
+
+    <!-- ───────────────────────── Module 4 ───────────────────────── -->
+    <section class="card" id="m4">
+      <h2>Module 4 · Schema design, integrity &amp; storage strategy</h2>
+      <p class="one-liner">The schema is the blueprint. <strong>Keys</strong> identify each row, <strong>constraints</strong> keep values valid, and <strong>transactions</strong> move the database from one valid state to another.</p>
+
+      <h3>4.1 Relational vocabulary</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Term</th><th>Everyday word</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Relation</strong></td><td>Table</td><td>STUDENT</td></tr>
+          <tr><td><strong>Tuple</strong></td><td>Row</td><td>One student</td></tr>
+          <tr><td><strong>Attribute</strong></td><td>Column</td><td>Email</td></tr>
+          <tr><td><strong>Domain</strong></td><td>Allowed values</td><td>GPA from 0.00 to 4.00, grades A–F</td></tr>
+          <tr><td><strong>Degree</strong></td><td>Number of attributes</td><td>5 columns → degree 5</td></tr>
+          <tr><td><strong>Relation state</strong></td><td>The rows right now</td><td>Today's 1,000 students</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li><strong>Atomic</strong> means indivisible for the system's needs. If you search by city, split the address into Street, City and Postal_Code.</li>
+        <li>In the formal model, rows have <strong>no order</strong> and <strong>no duplicates</strong> are allowed.</li>
+        <li>A <strong>valid state</strong> satisfies all constraints.</li>
+      </ul>
+
+      <h3>4.2 The three meanings of NULL</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Unknown</strong>: the value exists but isn't recorded</td><td>Phone number not provided yet</td></tr>
+          <tr><td><strong>Not applicable</strong>: the attribute doesn't apply</td><td>Visa_Status of a domestic student, manager_id of the CEO</td></tr>
+          <tr><td><strong>Not yet assigned</strong>: it will be filled in later</td><td>Advisor_ID before assignment, termination_date of an active employee</td></tr>
+        </tbody>
+      </table></div>
+      <p>NULL doesn't say <em>why</em> a value is missing, so it is ambiguous. Add a status attribute if the reason matters.</p>
+
+      <h3>4.3 Keys, step by step</h3>
+      <ol class="ladder">
+        <li><strong>Superkey</strong>: any set of attributes that is unique. It may have extra attributes, like {Student_ID, Email}.</li>
+        <li><strong>Key</strong>: a <em>minimal</em> superkey, with nothing extra, like {Student_ID}.</li>
+        <li><strong>Candidate keys</strong>: all the minimal keys, e.g. Student_ID, Email and Government_ID.</li>
+        <li><strong>Primary key</strong>: the candidate key you <em>choose</em>. It must be unique, minimal, stable and never NULL. A system ID beats an email (emails change) and a name (names repeat).</li>
+        <li><strong>Unique key</strong>: the other candidate keys. They get <code>UNIQUE</code> + <code>NOT NULL</code>.</li>
+      </ol>
+      <p><strong>Composite key:</strong> ENROLMENT(Student_ID, Section_ID, Grade) needs <em>both</em> IDs, because the relationship is many-to-many. A <strong>foreign key</strong> is an attribute that references another table's primary key.</p>
+
+      <h3>4.4 Types of constraints</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Type</th><th>Comes from</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Inherent</strong></td><td>The data model itself</td><td>No duplicate tuples</td></tr>
+          <tr><td><strong>Schema-based</strong></td><td>Declared in the schema</td><td>Domain, key, NOT NULL, entity integrity, referential integrity</td></tr>
+          <tr><td><strong>Semantic</strong> (business rules)</td><td>Organizational policy</td><td>At most 5 courses per term. Enforced by app code, triggers or procedures.</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li><strong>Entity integrity:</strong> the primary key can <strong>never be NULL</strong>.</li>
+        <li><strong>Referential integrity:</strong> a foreign key must match an <strong>existing</strong> primary key (or be NULL if allowed). This prevents <strong>orphan records</strong>.</li>
+      </ul>
+
+      <h3>4.5 Which rule is broken?</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Situation</th><th>Violates</th></tr></thead>
+        <tbody>
+          <tr><td>Insert a student with Student_ID = NULL</td><td>Entity integrity</td></tr>
+          <tr><td>Student with Program_ID = P999, which doesn't exist</td><td>Referential integrity</td></tr>
+          <tr><td>GPA = 6.5 when the range is 0.0–4.0</td><td>Domain constraint</td></tr>
+          <tr><td>Grade = 'Excellent' when the allowed grades are A, A-, B+, B, C, D, F</td><td>Domain constraint</td></tr>
+          <tr><td>Two students with the same Student_ID</td><td>Key constraint</td></tr>
+          <tr><td>A student registers for a 6th course when the limit is 5</td><td>Semantic constraint</td></tr>
+          <tr><td>Deleting a course that enrolments still reference</td><td>Referential integrity (creates orphans)</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.6 Deleting a row that others reference</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Option</th><th>What happens</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Restrict</strong></td><td>The delete is rejected</td><td>Dependents can't exist without the parent (active courses need a department)</td></tr>
+          <tr><td><strong>Cascade</strong></td><td>The dependent rows are deleted too</td><td>Dependents are meaningless alone. Dangerous: it can erase lots of data.</td></tr>
+          <tr><td><strong>Set NULL</strong></td><td>The dependents' foreign key becomes NULL</td><td>Dependents can exist without a parent (employees of a closed department)</td></tr>
+          <tr><td><strong>Set default</strong></td><td>The dependents' foreign key gets a default value</td><td>A sensible default exists</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>In-class activity:</strong> for historical budgets, don't delete the department at all. Mark it <strong>inactive</strong> so the history stays intact.</p>
+
+      <h3>4.7 Transactions</h3>
+      <p>A transaction is <strong>all or nothing</strong>. A transfer subtracts $500 from account A and adds it to account B. If the system fails in between, the money would vanish. As one transaction (<code>BEGIN … COMMIT</code>), a failure causes a <code>ROLLBACK</code> and nothing changes. The database always moves from one valid state to another.</p>
+
+      <h3>4.8 Turning requirements into design</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Need</th><th>Design choice</th></tr></thead>
+        <tbody>
+          <tr><td>Hierarchy in a relational table</td><td>A self-referencing foreign key: EMPLOYEE(Employee_ID, Name, Supervisor_ID)</td></tr>
+          <tr><td>Temporal</td><td>Start and end dates, timestamps, versioned rows</td></tr>
+          <tr><td>Spatial</td><td>Coordinates, spatial data types, spatial indexes</td></tr>
+          <tr><td>Multimedia</td><td>File references and metadata, with the files stored separately</td></tr>
+          <tr><td>Active</td><td>Triggers, alerts, rule procedures</td></tr>
+          <tr><td>Deductive</td><td>Fact tables and rule structures</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Logical design</strong> captures meaning. <strong>Physical design</strong> (indexes, storage) follows the <strong>access patterns</strong>. For example, a parcel service searches by tracking_number and by customer within a date range, so it needs a unique index on tracking_number and an index on (customer_id, delivery_date). Old deliveries can be partitioned by date.</p>
+
+      <div class="trap"><strong>Exam traps.</strong>
+        <ul>
+          <li>Degree = number of <em>columns</em>, not rows.</li>
+          <li>{Student_ID, Email} is a superkey but <em>not</em> a key, because it isn't minimal.</li>
+          <li>Entity integrity is about the <em>primary key</em>. Referential integrity is about <em>foreign keys</em>.</li>
+          <li>A wrong value or type is a <em>domain</em> violation. A missing referenced row is a <em>referential</em> violation.</li>
+        </ul>
+      </div>
+
+      <h3>Check yourself</h3>
+      <details><summary>Enrollment(student 1001 exists, course 999 doesn't, grade 'Excellent'). Which constraints fail?</summary><p>Referential integrity (course 999) and the grade domain ('Excellent').</p></details>
+      <details><summary>Why is Student_Name a poor primary key?</summary><p>Names repeat and can change.</p></details>
+      <details><summary>manager_id = NULL for the CEO means…?</summary><p>Not applicable.</p></details>
+      <details><summary>Which delete option would erase the employees, courses and budget history of a deleted department?</summary><p>Cascade, which is why it's dangerous here.</p></details>
+    </section>
+
+    <!-- ───────────────────────── Review ───────────────────────── -->
+    <section class="card" id="review">
+      <h2>Last-minute review</h2>
+      <h3>Pairs that are easy to mix up</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Pair</th><th>How to tell them apart</th></tr></thead>
+        <tbody>
+          <tr><td>Database vs DBMS</td><td>The data vs the software that manages it</td></tr>
+          <tr><td>Schema vs instance</td><td>The blueprint (stable) vs the data now (changes)</td></tr>
+          <tr><td>Three-schema vs three-tier</td><td>Levels of description vs layers of servers</td></tr>
+          <tr><td>Logical vs physical independence</td><td>Change the structure safely vs change the storage safely</td></tr>
+          <tr><td>DDL vs DML</td><td>CREATE (structure) vs SELECT / INSERT / UPDATE / DELETE (data)</td></tr>
+          <tr><td>Two-tier vs three-tier</td><td>Client + DB server vs client + application layer + DB server</td></tr>
+          <tr><td>Pin-count vs dirty bit</td><td>In use, so don't remove vs changed, so write back first</td></tr>
+          <tr><td>LRU vs FIFO</td><td>Last used vs arrived first</td></tr>
+          <tr><td>Primary vs clustering vs secondary index</td><td>Ordering + unique vs ordering + not unique vs not the ordering field</td></tr>
+          <tr><td>Heap vs sorted vs hashed</td><td>Easy insert vs ordered reads vs exact-match lookups</td></tr>
+          <tr><td>Striping vs mirroring vs parity</td><td>Spread for speed vs copy for safety vs rebuild info</td></tr>
+          <tr><td>NAS vs SAN</td><td>File-level vs block-level</td></tr>
+          <tr><td>Valid vs transaction time</td><td>True in the world vs recorded in the database</td></tr>
+          <tr><td>Range vs nearest neighbour vs spatial join</td><td>Inside an area vs closest vs two sets compared</td></tr>
+          <tr><td>Content-based retrieval vs semantic tagging</td><td>Analyse the media vs add labels to it</td></tr>
+          <tr><td>Superkey vs candidate vs primary key</td><td>Unique vs unique + minimal vs the chosen one</td></tr>
+          <tr><td>Entity vs referential integrity</td><td>PK never NULL vs FK must point to a real row</td></tr>
+          <tr><td>Restrict vs cascade vs set NULL</td><td>Block the delete vs delete the dependents too vs unlink the dependents</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Model answers for likely open questions</h3>
+      <p class="muted small">Two or three sentences each: a definition, then a contrast or an example.</p>
+      <details><summary>Database vs DBMS vs database system</summary><p>A database is a collection of related data that represents part of the real world. A DBMS is the software that defines, stores, retrieves, protects and shares that data. A database system is the database plus the DBMS plus the applications that use them.</p></details>
+      <details><summary>The three levels of the three-schema architecture</summary><p>The external level holds user views. The conceptual level describes the whole database (entities, relationships, constraints) without storage details. The internal level describes physical storage. Mappings connect the levels, so applications are separated from storage.</p></details>
+      <details><summary>Logical vs physical data independence</summary><p>Logical data independence means the conceptual schema can change, for example by adding an attribute, without changing user views or applications. Physical data independence means storage can change, for example by adding an index, without changing the conceptual schema.</p></details>
+      <details><summary>What the buffer manager does and why buffering helps</summary><p>The buffer manager keeps disk blocks in a memory buffer pool and decides which pages stay or get replaced, using the pin-count, the dirty bit and a policy such as LRU. Disk access is much slower than memory, so reusing pages already in memory avoids repeated disk reads.</p></details>
+      <details><summary>What an index is and its trade-off</summary><p>An index is an auxiliary structure that stores search-key values with pointers to records, so the DBMS can avoid full scans. It costs extra storage and slows down inserts, updates and deletes, so index only frequently searched fields.</p></details>
+      <details><summary>Valid time vs transaction time</summary><p>Valid time is when a fact is true in the real world, for example a salary effective Jan 1. Transaction time is when the database recorded it, for example Jan 10. A bitemporal database stores both.</p></details>
+      <details><summary>The ECA model</summary><p>Event: what triggers the rule, such as an insert or update. Condition: the test that decides whether to act, such as quantity below the reorder level. Action: what the system does, such as creating a replenishment request.</p></details>
+      <details><summary>Why a strict hierarchy fails when a course belongs to two programs</summary><p>A strict tree gives each child exactly one parent, but a shared course needs several parents, so the relationship is many-to-many. Store the entities relationally with a Program–Course link table (or a graph), and keep the tree only as a navigation view.</p></details>
+      <details><summary>Entity vs referential integrity</summary><p>Entity integrity says a primary key can never be NULL, so every row can be identified. Referential integrity says a foreign key must match an existing primary key, which prevents orphan records.</p></details>
+      <details><summary>Superkey vs candidate key vs primary key</summary><p>A superkey is any set of attributes that uniquely identifies rows, possibly with extras. A candidate key is a minimal superkey. The primary key is the candidate key you choose: unique, stable and never NULL.</p></details>
+      <details><summary>Why run a money transfer as a transaction</summary><p>The debit and the credit must both happen or neither. Inside a transaction, a failure triggers a rollback, so the database moves from one valid state to another and money never disappears halfway.</p></details>
+      <details><summary>The three meanings of NULL</summary><p>Unknown (a phone number not provided), not applicable (Visa_Status for a domestic student) and not yet assigned (Advisor_ID before assignment). NULL alone doesn't say which, so it is ambiguous.</p></details>
+    </section>
+  </main>
+  <footer class="site-footer">Study aid, not official course material. Based on the Module 1–4 readings and in-class activities. <a href="index.html">Test yourself with the practice quiz →</a></footer>
+</body>
+</html>

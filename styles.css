@@ -180,3 +180,44 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .bar-row { grid-template-columns: 110px 1fr 48px; }
   .score { font-size: 2.4rem; }
 }
+
+/* Site navigation */
+.site-nav { display: flex; gap: 18px; margin: -8px 0 20px; }
+.site-nav a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.site-nav a[aria-current] { color: var(--text); border-bottom: 2px solid var(--accent); }
+
+/* Study guide */
+a { color: var(--accent); }
+.guide h2 { font-size: 1.3rem; }
+.guide h3 { margin-top: 24px; }
+.guide p, .guide li { margin: 6px 0; }
+.guide code { font: 13.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.guide pre code { padding: 0; background: none; }
+.table-wrap { overflow-x: auto; margin: 8px 0; }
+.table-wrap table { min-width: 480px; }
+.one-liner { font-size: 1.05rem; border-left: 4px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.example { background: var(--code-bg); padding: 10px 14px; border-radius: 8px; }
+.trap { background: var(--warn-soft); border-radius: 8px; padding: 12px 16px; margin: 20px 0 8px; }
+.trap > strong:first-child { color: var(--warn); }
+.trap ul { margin: 6px 0 0; padding-left: 20px; }
+.guide details { border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin: 8px 0; }
+.guide summary { cursor: pointer; font-weight: 600; }
+.guide details[open] summary { margin-bottom: 6px; }
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 12px 0; }
+.flow .step { flex: 1 1 160px; display: grid; gap: 4px; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.flow .step span { color: var(--muted); font-size: .9rem; }
+.flow .arrow { align-self: center; color: var(--muted); font-size: 1.3rem; }
+.diagram { width: 100%; min-width: 600px; height: auto; display: block; }
+.diagram .box { fill: var(--surface); stroke: var(--border); stroke-width: 1.25; }
+.diagram .box.accent { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.diagram text { fill: var(--text); font: 13px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.diagram text.level { font-weight: 700; }
+.diagram text.muted { fill: var(--muted); font-size: 11.5px; }
+.diagram line { stroke: var(--muted); stroke-width: 1.25; }
+.diagram .arrowhead { fill: var(--muted); }
+figure { margin: 12px 0; }
+
+@media (max-width: 560px) {
+  .flow .arrow { transform: rotate(90deg); margin: 0 auto; }
+  .flow .step { flex-basis: 100%; }
+}
